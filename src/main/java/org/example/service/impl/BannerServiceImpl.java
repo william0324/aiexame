@@ -114,4 +114,14 @@ public class BannerServiceImpl extends ServiceImpl<BannerMapper, Banner> impleme
             throw new RuntimeException("添加轮播图失败");
         }
     }
+
+    @Override
+    public void updateBanner(Banner banner) {
+        int update = bannerMapper.updateById(banner);
+        if (update > 0) {
+            log.info("更新轮播图成功：{}", banner);
+        } else {
+            throw new RuntimeException("更新轮播图失败");
+        }
+    }
 }

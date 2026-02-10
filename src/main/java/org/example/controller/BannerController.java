@@ -104,7 +104,8 @@ public class BannerController {
     @PutMapping("/update")  // 处理PUT请求
     @Operation(summary = "更新轮播图", description = "更新轮播图的信息，包括图片、标题、跳转链接、排序等")  // API描述
     public Result<String> updateBanner(@RequestBody Banner banner) {
-        return null;
+        bannerService.updateBanner(banner);
+        return Result.success("更新轮播图成功");
     }
     
     /**

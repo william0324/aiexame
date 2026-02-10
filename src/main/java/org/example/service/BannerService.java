@@ -25,4 +25,6 @@ public interface BannerService extends IService<Banner> {
     String uploadBannerImage(MultipartFile file) throws Exception;
 
     void addBanner(Banner banner);
+
+    void updateBanner(Banner banner);
 }
