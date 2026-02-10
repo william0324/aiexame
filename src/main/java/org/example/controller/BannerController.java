@@ -40,9 +40,9 @@ public class BannerController {
     @Operation(summary = "上传轮播图图片", description = "将图片文件上传到MinIO服务器，返回可访问的图片URL")  // API描述
     public Result<String> uploadBannerImage(
             @Parameter(description = "要上传的图片文件，支持jpg、png、gif等格式，大小限制5MB") 
-            @RequestParam("file") MultipartFile file) {
-
-        return Result.success("上传图片地址", "图片上传成功");
+            @RequestParam("file") MultipartFile file) throws Exception {
+        String imageUrl = bannerService.uploadBannerImage(file);
+        return Result.success(imageUrl, "图片上传成功");
     }
     
     /**
@@ -92,7 +92,8 @@ public class BannerController {
     @PostMapping("/add")  // 处理POST请求
     @Operation(summary = "添加轮播图", description = "创建新的轮播图，需要提供图片URL、标题、跳转链接等信息")  // API描述
     public Result<String> addBanner(@RequestBody Banner banner) {
-        return null;
+        bannerService.addBanner(banner);
+        return Result.success("添加轮播图成功");
     }
     
     /**
