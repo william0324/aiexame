@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.mapper.QuestionMapper">
+
+    <select id="selectCountByCategoryId" resultType="java.util.HashMap">
+        select category_id as categoryId,count(category_id) as count
+        from questions
+        where is_deleted = 0
+        group by category_id;
+    </select>
+
+
+
+</mapper>

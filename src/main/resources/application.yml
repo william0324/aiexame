@@ -23,6 +23,7 @@ minio:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath*:/mapper/**/*.xml
 # 服务器配置
 server:
   port: 8080
