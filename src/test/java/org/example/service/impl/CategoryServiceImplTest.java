@@ -19,4 +19,13 @@ class CategoryServiceImplTest {
     void getCategories() {
         categoryService.getCategories();
     }
+
+    @Test
+    void testGetCategories() {
+    }
+
+    @Test
+    void getCategoryTree() {
+        categoryService.getCategoryTree();
+    }
 }
