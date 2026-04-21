@@ -3,6 +3,7 @@ package org.example.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.example.entity.Question;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.example.vo.QuestionQueryVo;
 
 import java.util.List;
 
@@ -31,6 +32,11 @@ import java.util.List;
  */
 public interface QuestionService extends IService<Question> {
 
-    Page<Question> getQuestionList(Integer page, Integer size, Long categoryId, String difficulty, String type, String keyword);
+    /**
+     * 分页查询题目列表
+     * @param queryVo 查询参数对象
+     * @return 分页结果
+     */
+    Page<Question> getQuestionList(QuestionQueryVo queryVo);
 
 }

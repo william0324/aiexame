@@ -5,6 +5,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.Question;
 import org.example.service.QuestionService;
+import org.example.vo.QuestionQueryVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -17,7 +18,12 @@ class QuestionServiceImplTest {
 
     @Test
     void getQuestionList() {
-        Page<Question> questionList = questionService.getQuestionList(1, 10, 14L, null, null, null);
+        QuestionQueryVo queryVo = new QuestionQueryVo();
+        queryVo.setPage(1);
+        queryVo.setSize(10);
+        queryVo.setCategoryId(14L);
+        
+        Page<Question> questionList = questionService.getQuestionList(queryVo);
         log.info("questionList: {}", questionList);
     }
 }

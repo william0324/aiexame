@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.service.QuestionService;
+import org.example.vo.QuestionQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,34 +54,21 @@ public class QuestionController {
      * 
      * RESTful API教学：
      * - URL：GET /api/questions/list
-     * - 查询参数：通过@RequestParam接收URL查询参数
-     * - 默认值：通过defaultValue设置参数默认值
-     * - 可选参数：通过required = false设置可选参数
+     * - 使用VO对象封装多个查询参数，提高代码可读性
+     * - Spring自动将请求参数绑定到VO对象的属性
      * 
      * MyBatis Plus分页教学：
      * - Page对象：封装分页信息（页码、每页大小、总数等）
      * - QueryWrapper：动态构建查询条件，避免SQL注入
      * - 条件构建：支持等值查询(eq)、模糊查询(like)、排序(orderBy)
      * 
-     * @param page 当前页码，从1开始，默认第1页
-     * @param size 每页显示数量，默认10条
-     * @param categoryId 分类ID筛选条件，可选
-     * @param difficulty 难度筛选条件（EASY/MEDIUM/HARD），可选
-     * @param type 题型筛选条件（CHOICE/JUDGE/TEXT），可选
-     * @param keyword 关键词搜索，对题目标题进行模糊查询，可选
+     * @param queryVo 查询参数对象，包含分页和多条件筛选参数
      * @return 封装的分页查询结果，包含题目列表和分页信息
      */
-    @GetMapping("/list")  // 映射GET请求到/api/questions/list
-    @Operation(summary = "分页查询题目列表", description = "支持按分类、难度、题型、关键词进行多条件筛选的分页查询")  // Swagger接口描述
-    public Result<Page<Question>> getQuestionList(
-            @Parameter(description = "当前页码，从1开始", example = "1") @RequestParam(defaultValue = "1") Integer page,  // 参数描述
-            @Parameter(description = "每页显示数量", example = "10") @RequestParam(defaultValue = "10") Integer size,
-            @Parameter(description = "分类ID筛选条件") @RequestParam(required = false) Long categoryId,
-            @Parameter(description = "难度筛选条件，可选值：EASY/MEDIUM/HARD") @RequestParam(required = false) String difficulty,
-            @Parameter(description = "题型筛选条件，可选值：CHOICE/JUDGE/TEXT") @RequestParam(required = false) String type,
-            @Parameter(description = "关键词搜索，对题目标题进行模糊查询") @RequestParam(required = false) String keyword) {
-        // 返回统一格式的成功响应
-        Page<Question> pageResult = questionService.getQuestionList(page, size, categoryId, difficulty, type, keyword);
+    @GetMapping("/list")
+    @Operation(summary = "分页查询题目列表", description = "支持按分类、难度、题型、关键词进行多条件筛选的分页查询")
+    public Result<Page<Question>> getQuestionList(@ModelAttribute QuestionQueryVo queryVo) {
+        Page<Question> pageResult = questionService.getQuestionList(queryVo);
         return Result.success(pageResult);
     }
     
@@ -99,7 +87,6 @@ public class QuestionController {
     @Operation(summary = "根据ID查询题目详情", description = "获取指定ID的题目完整信息，包括题目内容、选项、答案等详细数据")  // API描述
     public Result<Question> getQuestionById(
             @Parameter(description = "题目ID", example = "1") @PathVariable Long id) {
-
         return Result.success(null);
     }
     
@@ -230,20 +217,6 @@ public class QuestionController {
         return Result.success(null);
     }
 
-    /**
-     * 获取热门题目 - 首页展示推荐题目
-     * 
-     * 业务逻辑：
-     * - 热门度定义：按创建时间倒序，展示最新题目
-     * - 可扩展：未来可按答题次数、正确率等指标排序
-     * 
-     * SQL优化教学：
-     * - 使用LIMIT限制结果集大小，提高查询性能
-     * - 建议在create_time字段上建立索引
-     * 
-     * @param size 返回题目数量，默认6条（适合首页展示）
-     * @return 热门题目列表
-     */
     /**
      * 获取热门题目 - 基于访问次数的推荐
      * 
