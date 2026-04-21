@@ -52,10 +52,11 @@ public class CategoryController {
      * @param category 分类对象
      * @return 操作结果
      */
+    @CrossOrigin("*")
     @PostMapping  // 处理POST请求
     @Operation(summary = "添加新分类", description = "创建新的题目分类，支持设置父分类实现层级结构")  // API描述
     public Result<Void> addCategory(@RequestBody Category category) {
-        return Result.success(null);
+        return categoryService.addCategory(category);
     }
 
     /**
@@ -63,10 +64,11 @@ public class CategoryController {
      * @param category 分类对象
      * @return 操作结果
      */
+    @CrossOrigin("*")
     @PutMapping  // 处理PUT请求
     @Operation(summary = "更新分类信息", description = "修改分类的名称、描述、排序等信息")  // API描述
     public Result<Void> updateCategory(@RequestBody Category category) {
-        return Result.success(null);
+        return categoryService.updateCategory(category);
     }
 
     /**
@@ -74,10 +76,11 @@ public class CategoryController {
      * @param id 分类ID
      * @return 操作结果
      */
+    @CrossOrigin("*")
     @DeleteMapping("/{id}")  // 处理DELETE请求
     @Operation(summary = "删除分类", description = "删除指定的题目分类，注意：删除前需确保分类下没有题目")  // API描述
     public Result<Void> deleteCategory(
             @Parameter(description = "分类ID") @PathVariable Long id) {
-        return Result.success(null);
+        return categoryService.deleteCategory(id);
     }
 } 
