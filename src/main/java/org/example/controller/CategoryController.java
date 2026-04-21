@@ -39,6 +39,7 @@ public class CategoryController {
      * 获取分类树形结构
      * @return 分类树数据
      */
+    @CrossOrigin("*")
     @GetMapping("/tree")  // 处理GET请求
     @Operation(summary = "获取分类树形结构", description = "获取题目分类的树形层级结构，用于前端树形组件展示")  // API描述
     public Result<List<Category>> getCategoryTree() {
