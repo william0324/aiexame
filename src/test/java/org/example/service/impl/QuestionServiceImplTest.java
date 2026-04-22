@@ -21,7 +21,7 @@ class QuestionServiceImplTest {
         QuestionQueryVo queryVo = new QuestionQueryVo();
         queryVo.setPage(1);
         queryVo.setSize(10);
-        queryVo.setCategoryId(14L);
+//        queryVo.setCategoryId(14L);
         
         Page<Question> questionList = questionService.getQuestionList(queryVo);
         log.info("questionList: {}", questionList);

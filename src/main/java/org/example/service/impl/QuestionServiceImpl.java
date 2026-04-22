@@ -2,14 +2,26 @@ package org.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.annotation.Resource;
+import org.example.entity.Category;
 import org.example.entity.Question;
+import org.example.entity.QuestionAnswer;
+import org.example.entity.QuestionChoice;
+import org.example.mapper.CategoryMapper;
+import org.example.mapper.QuestionAnswerMapper;
+import org.example.mapper.QuestionChoiceMapper;
 import org.example.mapper.QuestionMapper;
 import org.example.service.QuestionService;
 import org.example.vo.QuestionQueryVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 题目Service实现类
@@ -19,6 +31,14 @@ import org.springframework.util.StringUtils;
 @Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements QuestionService {
 
+    @Resource
+    private QuestionAnswerMapper questionAnswerMapper;
+
+    @Resource
+    private QuestionChoiceMapper questionChoiceMapper;
+
+    @Resource
+    private CategoryMapper categoryMapper;
 
     @Override
     public Page<Question> getQuestionList(QuestionQueryVo queryVo) {
@@ -38,7 +58,43 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         // 执行分页查询
         Page<Question> pageInfo = new Page<>(page, size);
         Page<Question> pageResult = this.page(pageInfo, queryWrapper);
-        
+
+        // 嵌套查询
+        List<Question> records = pageResult.getRecords();
+        if (CollectionUtils.isEmpty(records)) {
+            return pageResult;
+        }
+
+        List<Long> questionIds = records.stream().map(Question::getId).toList();
+        List<Long> categoryIds = records.stream().map(Question::getCategoryId).distinct().toList();
+
+        // 查询三次数据库，得到三个列表
+        List<QuestionAnswer> answers = questionAnswerMapper.selectList(
+                new LambdaQueryWrapper<QuestionAnswer>()
+                        .eq(QuestionAnswer::getIsDeleted, 0)
+                .in(QuestionAnswer::getQuestionId, questionIds));
+        List<QuestionChoice> choices = questionChoiceMapper.selectList(
+                new LambdaQueryWrapper<QuestionChoice>()
+                        .eq(QuestionChoice::getIsDeleted, 0)
+                .in(QuestionChoice::getQuestionId, questionIds));
+
+        List<Category> categories = categoryMapper.selectList(
+                new LambdaQueryWrapper<Category>()
+                        .eq(Category::getIsDeleted, 0)
+                .in(Category::getId, categoryIds));
+
+        Map<Long, List<QuestionAnswer>> answerMap = answers.stream().collect(Collectors.groupingBy(QuestionAnswer::getQuestionId));
+        Map<Long, List<QuestionChoice>> choiceMap = choices.stream().collect(Collectors.groupingBy(QuestionChoice::getQuestionId));
+        Map<Long, Category> categoryMap = categories.stream().collect(Collectors.toMap(Category::getId, v -> v));
+
+        records.forEach(question -> {
+            Long questionId = question.getId();
+            Long categoryId = question.getCategoryId();
+            question.setAnswer(answerMap.get(questionId).get(0));
+            question.setChoices(choiceMap.get(questionId));
+            question.setCategory(categoryMap.get(categoryId));
+        });
+        pageResult.setRecords(records);
         log.info("分页查询题目列表 - 页码: {}, 每页: {}, 总数: {}", page, size, pageResult.getTotal());
         return pageResult;
     }
