@@ -14,4 +14,6 @@ import java.util.Map;
 public interface QuestionMapper extends BaseMapper<Question> {
 
     List<Map<String, Object>> selectCountByCategoryId();
+
+    Question getQuestionById(Long id);
 }

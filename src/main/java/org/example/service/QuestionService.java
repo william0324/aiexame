@@ -39,4 +39,5 @@ public interface QuestionService extends IService<Question> {
      */
     Page<Question> getQuestionList(QuestionQueryVo queryVo);
 
+    Question getQuestionById(Long id);
 }

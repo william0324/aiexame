@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.common.Result;
 import org.example.entity.Question;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
  * @author 智能学习平台开发团队
  * @version 1.0
  */
+@Slf4j
 @RestController  // @Controller + @ResponseBody，表示这是一个REST控制器，返回JSON数据
 @RequestMapping("/api/questions")  // 设置基础URL路径，所有方法的URL都以此开头
 @CrossOrigin(origins = "*")  // 允许跨域访问，解决前后端分离开发中的跨域问题
@@ -87,7 +89,9 @@ public class QuestionController {
     @Operation(summary = "根据ID查询题目详情", description = "获取指定ID的题目完整信息，包括题目内容、选项、答案等详细数据")  // API描述
     public Result<Question> getQuestionById(
             @Parameter(description = "题目ID", example = "1") @PathVariable Long id) {
-        return Result.success(null);
+        Question result = questionService.getQuestionById(id);
+        log.info("查询题目：id={}, result={}", id, result);
+        return Result.success(result);
     }
     
     /**

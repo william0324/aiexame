@@ -32,6 +32,9 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements QuestionService {
 
     @Resource
+    private QuestionMapper questionMapper;
+
+    @Resource
     private QuestionAnswerMapper questionAnswerMapper;
 
     @Resource
@@ -97,5 +100,11 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         pageResult.setRecords(records);
         log.info("分页查询题目列表 - 页码: {}, 每页: {}, 总数: {}", page, size, pageResult.getTotal());
         return pageResult;
+    }
+
+    @Override
+    public Question getQuestionById(Long id) {
+        Question question = questionMapper.getQuestionById(id);
+        return null;
     }
 }
