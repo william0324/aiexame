@@ -4,18 +4,34 @@
 
 <mapper namespace="org.example.mapper.QuestionMapper">
     <resultMap id="getQuestionByIdMap" type="org.example.entity.Question">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="title" column="title" jdbcType="VARCHAR"/>
-        <result property="type" column="type" jdbcType="VARCHAR"/>
-        <result property="multi" column="multi" jdbcType="BIT"/>
-        <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
-        <result property="difficulty" column="difficulty" jdbcType="VARCHAR"/>
-        <result property="score" column="score" jdbcType="INTEGER"/>
-        <result property="paperScore" column="paper_score" jdbcType="DECIMAL"/>
-        <result property="analysis" column="analysis" jdbcType="VARCHAR"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="isDeleted" column="is_deleted" jdbcType="BIT"/>
+        <id property="id" column="q_id" jdbcType="BIGINT"/>
+        <result property="title" column="q_title" jdbcType="VARCHAR"/>
+        <result property="type" column="q_type" jdbcType="VARCHAR"/>
+        <result property="multi" column="q_multi" jdbcType="BIT"/>
+        <result property="categoryId" column="q_category_id" jdbcType="BIGINT"/>
+        <result property="difficulty" column="q_difficulty" jdbcType="VARCHAR"/>
+        <result property="score" column="q_score" jdbcType="INTEGER"/>
+        <result property="paperScore" column="q_paper_score" jdbcType="DECIMAL"/>
+        <result property="analysis" column="q_analysis" jdbcType="VARCHAR"/>
+        <result property="createTime" column="q_create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="q_update_time" jdbcType="TIMESTAMP"/>
+        <association property="answer" javaType="org.example.entity.QuestionAnswer">
+            <id property="id" column="qa_id"/>
+            <result property="answer" column="qa_answer"/>
+            <result property="keywords" column="qa_keywords"/>
+            <result property="questionId" column="qa_question_id"/>
+            <result property="createTime" column="qa_create_time"/>
+            <result property="updateTime" column="qa_update_time"/>
+        </association>
+        <collection property="choices" ofType="org.example.entity.QuestionChoice">
+            <id property="id" column="qc_id"/>
+            <result property="questionId" column="qc_question_id"/>
+            <result property="content" column="qc_content"/>
+            <result property="isCorrect" column="qc_is_correct"/>
+            <result property="sort" column="qc_sort"/>
+            <result property="createTime" column="qc_create_time"/>
+            <result property="updateTime" column="qc_update_time"/>
+        </collection>
     </resultMap>
 
     <select id="selectCountByCategoryId" resultType="java.util.HashMap">
@@ -24,7 +40,8 @@
         where is_deleted = 0
         group by category_id
     </select>
-    <select id="getQuestionById" resultType="org.example.entity.Question">
+    <select id="getQuestionById" resultMap="getQuestionByIdMap">
+        select
 
     </select>
 
