@@ -114,10 +114,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             throw new RuntimeException("查询题目失败!");
         }
         // 开启一个线程记录热点题目
-        new Thread(() -> {
-            double zIncrementScore = redisUtil.zIncrementScore(CacheConstants.QUESTION_CACHE, id, 1);
-            log.info("记录题目：{}，当前分数：{}", id, zIncrementScore);
-        }).start();
-        return null;
+        double zIncrementScore = redisUtil.zIncrementScore(CacheConstants.QUESTION_CACHE, id, 1);
+        log.info("记录题目：{}，当前分数：{}", id, zIncrementScore);
+        return question;
     }
 }

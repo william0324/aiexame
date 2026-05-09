@@ -26,4 +26,10 @@ class QuestionServiceImplTest {
         Page<Question> questionList = questionService.getQuestionList(queryVo);
         log.info("questionList: {}", questionList);
     }
+
+    @Test
+    void getQuestionById() {
+        Question questionById = questionService.getQuestionById(71L);
+        log.info("questionById: {}", questionById);
+    }
 }
