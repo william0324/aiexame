@@ -41,8 +41,40 @@
         group by category_id
     </select>
     <select id="getQuestionById" resultMap="getQuestionByIdMap">
-        select
-
+        SELECT q.id           AS q_id,
+               q.title        AS q_title,
+               q.type         AS q_type,
+               q.multi        AS q_multi,
+               q.category_id  AS q_category_id,
+               q.difficulty   AS q_difficulty,
+               q.score        AS q_score,
+               q.analysis     AS q_analysis,
+               q.create_time  AS q_create_time,
+               q.update_time  AS q_update_time,
+               qa.id          AS qa_id,
+               qa.question_id AS qa_question_id,
+               qa.answer      AS qa_answer,
+               qa.keywords    AS qa_keywords,
+               qa.create_time AS qa_create_time,
+               qa.update_time AS qa_update_time,
+               qc.id          AS qc_id,
+               qc.question_id AS qc_question_id,
+               qc.content     AS qc_content,
+               qc.is_correct  AS qc_is_correct,
+               qc.sort        AS qc_sort,
+               qc.create_time AS qc_create_time,
+               qc.update_time AS qc_update_time,
+               qc.is_deleted  AS qc_is_deleted
+        FROM exam_system_new.questions q
+                 LEFT JOIN
+             exam_system_new.question_answers qa ON q.id = qa.question_id AND qa.is_deleted = 0
+                 LEFT JOIN
+             exam_system_new.question_choices qc ON q.id = qc.question_id AND qc.is_deleted = 0
+        WHERE q.is_deleted = 0
+          and qa.is_deleted = 0
+          and qc.is_deleted = 0
+          and q.id = #{id}
+        order by qc.sort
     </select>
 
 

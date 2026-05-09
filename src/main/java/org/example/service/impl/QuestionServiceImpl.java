@@ -3,6 +3,7 @@ package org.example.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
+import org.example.common.CacheConstants;
 import org.example.entity.Category;
 import org.example.entity.Question;
 import org.example.entity.QuestionAnswer;
@@ -12,6 +13,7 @@ import org.example.mapper.QuestionAnswerMapper;
 import org.example.mapper.QuestionChoiceMapper;
 import org.example.mapper.QuestionMapper;
 import org.example.service.QuestionService;
+import org.example.utils.RedisUtil;
 import org.example.vo.QuestionQueryVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
     @Resource
     private CategoryMapper categoryMapper;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Override
     public Page<Question> getQuestionList(QuestionQueryVo queryVo) {
@@ -105,6 +110,14 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Override
     public Question getQuestionById(Long id) {
         Question question = questionMapper.getQuestionById(id);
+        if (question == null) {
+            throw new RuntimeException("查询题目失败!");
+        }
+        // 开启一个线程记录热点题目
+        new Thread(() -> {
+            double zIncrementScore = redisUtil.zIncrementScore(CacheConstants.QUESTION_CACHE, id, 1);
+            log.info("记录题目：{}，当前分数：{}", id, zIncrementScore);
+        }).start();
         return null;
     }
 }

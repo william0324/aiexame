@@ -1,6 +1,7 @@
 package org.example.mapper;
 
 
+import org.apache.ibatis.annotations.Param;
 import org.example.entity.Question;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -15,5 +16,5 @@ public interface QuestionMapper extends BaseMapper<Question> {
 
     List<Map<String, Object>> selectCountByCategoryId();
 
-    Question getQuestionById(Long id);
+    Question getQuestionById(@Param("id") Long id);
 }
