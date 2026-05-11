@@ -28,8 +28,9 @@ class QuestionServiceImplTest {
     }
 
     @Test
-    void getQuestionById() {
+    void getQuestionById() throws InterruptedException {
         Question questionById = questionService.getQuestionById(71L);
         log.info("questionById: {}", questionById);
+        Thread.sleep(3000);
     }
 }

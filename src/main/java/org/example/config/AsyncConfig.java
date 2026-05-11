@@ -12,8 +12,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAsync
 public class AsyncConfig {
 
-    @Bean("questionExecutor")
-    public Executor questionExecutor() {
+    @Bean("questionHotExecutor")
+    public ThreadPoolTaskExecutor questionHotExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
         executor.setCorePoolSize(5);

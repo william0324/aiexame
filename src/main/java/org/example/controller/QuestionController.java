@@ -9,14 +9,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.service.QuestionService;
 import org.example.vo.QuestionQueryVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 题目控制器 - 处理题目相关的HTTP请求
@@ -112,8 +107,11 @@ public class QuestionController {
     @PostMapping  // 映射POST请求到/api/questions
     @Operation(summary = "创建新题目", description = "添加新的考试题目，支持选择题、判断题、简答题等多种题型")  // API描述
     public Result<Question> createQuestion(@RequestBody Question question) {
-
-        return Result.success(null);
+        Result<String> result = questionService.createQuestion(question);
+        if (result.getCode() != 200) {
+            return Result.error(result.getMessage());
+        }
+        return Result.success(question);
     }
     
     /**

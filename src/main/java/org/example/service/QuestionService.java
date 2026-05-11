@@ -1,6 +1,7 @@
 package org.example.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.example.common.Result;
 import org.example.entity.Question;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.example.vo.QuestionQueryVo;
@@ -40,4 +41,6 @@ public interface QuestionService extends IService<Question> {
     Page<Question> getQuestionList(QuestionQueryVo queryVo);
 
     Question getQuestionById(Long id);
+
+    Result<String> createQuestion(Question question);
 }
