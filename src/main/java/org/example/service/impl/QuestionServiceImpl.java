@@ -143,9 +143,41 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             log.info("在类型为{}的题目中，已经存在名为{}的题目,创建失败!", question.getType(), question.getTitle());
             return Result.error("在类型为%s的题目中，已经存在名为%s的题目,创建失败!".formatted(question.getType(), question.getTitle()));
         }
+        int insert = questionMapper.insert(question);
+        if (insert <= 0) {
+            log.info("添加题目失败：{}", question);
+            return Result.error("添加题目%s失败!".formatted(question.getTitle()));
+        }
+        Long questionId = question.getId();
+        QuestionAnswer questionAnswer = new QuestionAnswer();
+        questionAnswer.setQuestionId(questionId);
 
-
-
-        return null;
+        if ("CHOICE".equals(question.getType())) {
+            List<QuestionChoice> choices = question.getChoices();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < choices.size(); i++) {
+                QuestionChoice questionChoice = choices.get(i);
+                questionChoice.setQuestionId(questionId);
+                questionChoice.setSort(i);
+                int row = questionChoiceMapper.insert(questionChoice);
+                if (row <= 0) {
+                    log.info("添加题目选项失败：{}", questionChoice);
+                    return Result.error("添加题目%s的选项失败!".formatted(question.getTitle()));
+                }
+                if (Boolean.TRUE.equals(questionChoice.getIsCorrect())) {
+                    if (!sb.isEmpty()) {
+                        sb.append(',');
+                    }
+                    sb.append('A' + i);
+                }
+            }
+            questionAnswer.setAnswer(sb.toString());
+        }
+        int insert1 = questionAnswerMapper.insert(questionAnswer);
+        if (insert1 <= 0) {
+            log.info("添加题目答案失败：{}", questionAnswer);
+            return Result.error("添加题目%s的答案失败!".formatted(question.getTitle()));
+        }
+        return Result.success("添加成功!");
     }
 }
