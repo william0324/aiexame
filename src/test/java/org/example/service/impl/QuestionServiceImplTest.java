@@ -234,4 +234,40 @@ class QuestionServiceImplTest {
         verify(questionAnswerMapper, times(1)).insert(any(QuestionAnswer.class));
     }
 
+    @Test
+    @DisplayName("测试创建多选题 - 成功")
+    void testCreateMultipleChoiceQuestion_Success() {
+        // 准备测试数据
+        Question question = createBaseChoiceQuestion();
+        question.setTitle("以下哪些是Java面向对象的特性？");
+        question.setMulti(true);
+        List<QuestionChoice> choices = createMultipleChoiceOptions();
+        question.setChoices(choices);
+
+        // Mock行为
+        when(questionMapper.exists(any(LambdaQueryWrapper.class))).thenReturn(false);
+        when(questionMapper.insert(any(Question.class))).thenAnswer(invocation -> {
+            Question q = invocation.getArgument(0);
+            q.setId(2L);
+            return 1;
+        });
+        when(questionChoiceMapper.insert(any(QuestionChoice.class))).thenReturn(1);
+        when(questionAnswerMapper.insert(any(QuestionAnswer.class))).thenReturn(1);
+
+        // 执行测试
+        Result<String> result = questionService.createQuestion(question);
+
+        // 验证结果
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertEquals("添加成功!", result.getMessage());
+
+        // 验证答案应该是 "A,B,C"
+        verify(questionAnswerMapper).insert(argThat(answer -> {
+            QuestionAnswer qa = (QuestionAnswer) answer;
+            String ans = qa.getAnswer();
+            return ans != null && ans.contains("A") && ans.contains("B") && ans.contains("C");
+        }));
+    }
+
 }

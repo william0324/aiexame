@@ -168,7 +168,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
                     if (!sb.isEmpty()) {
                         sb.append(',');
                     }
-                    sb.append('A' + i);
+                    sb.append((char)('A' + i));
                 }
             }
             questionAnswer.setAnswer(sb.toString());
