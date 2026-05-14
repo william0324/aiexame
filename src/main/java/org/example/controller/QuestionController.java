@@ -131,7 +131,11 @@ public class QuestionController {
     public Result<Question> updateQuestion(
             @Parameter(description = "题目ID") @PathVariable Long id, 
             @RequestBody Question question) {
-        return Result.success(null);
+        Result<String> result = questionService.updateQuestion(question);
+        if (result.getCode() != 200) {
+            return Result.error(result.getMessage());
+        }
+        return Result.success(question);
     }
     
     /**

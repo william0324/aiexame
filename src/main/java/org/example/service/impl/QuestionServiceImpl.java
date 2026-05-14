@@ -180,4 +180,22 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         }
         return Result.success("添加成功!");
     }
+
+    @Override
+    public Result<String> updateQuestion(Question question) {
+        // 同一个类型不能题目title相同
+        LambdaQueryWrapper<Question> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Question::getType, question.getType());
+        lambdaQueryWrapper.eq(Question::getTitle, question.getTitle());
+        lambdaQueryWrapper.eq(Question::getIsDeleted, 0);
+        boolean exists = questionMapper.exists(lambdaQueryWrapper);
+        if (exists) {
+            log.info("在类型为{}的题目中，已经存在名为{}的题目,更新失败!", question.getType(), question.getTitle());
+            return Result.error("在类型为%s的题目中，已经存在名为%s的题目,更新失败!".formatted(question.getType(), question.getTitle()));
+        }
+
+
+
+        return null;
+    }
 }

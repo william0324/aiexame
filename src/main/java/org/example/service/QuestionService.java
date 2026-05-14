@@ -43,4 +43,6 @@ public interface QuestionService extends IService<Question> {
     Question getQuestionById(Long id);
 
     Result<String> createQuestion(Question question);
+
+    Result<String> updateQuestion(Question question);
 }
